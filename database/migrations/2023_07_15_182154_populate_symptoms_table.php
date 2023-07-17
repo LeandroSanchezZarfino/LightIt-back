@@ -6,6 +6,12 @@ use Illuminate\Support\Facades\Http;
 
 class PopulateSymptomsTable extends Migration
 {
+    protected $apiClient;
+
+    public function __construct()
+    {
+        $this->apiClient = new \App\Services\ApiClient();
+    }
     /**
      * Run the migrations.
      *
@@ -13,9 +19,7 @@ class PopulateSymptomsTable extends Migration
      */
     public function up()
     {
-        $url = config('constants.api.api_url') . '/' . config('constants.api.routes.symptoms') . '?token=' . config('constants.api.auth_token') . '&format=json&language=en-gb';
-        $response = Http::get($url);
-        $symptoms = $response->json();
+        $symptoms = $this->apiClient->getSymptoms();
 
         foreach ($symptoms as $symptom) {
             DB::table('symptoms')->insert([
